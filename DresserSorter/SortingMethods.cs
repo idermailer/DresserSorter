@@ -3,6 +3,7 @@ using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Enchantments;
 using StardewValley.Objects;
+using Trinkets = StardewValley.Objects.Trinkets;
 using StardewValley.Tools;
 using System.Drawing;
 
@@ -236,7 +237,7 @@ namespace DresserSorter
         {
             if (a is Furniture f1 && b is Furniture f2)
                 return FurnitureCompare(f1, f2);
-            else if (a is Trinket t1 && b is Trinket t2)
+            else if (a is Trinkets.Trinket t1 && b is Trinkets.Trinket t2)
                 return TrinketCompare(t1, t2);
 
             int result = 0;
@@ -266,7 +267,7 @@ namespace DresserSorter
             return result;
         }
 
-        private static int TrinketCompare(Trinket a, Trinket b)
+        private static int TrinketCompare(Trinkets.Trinket a, Trinkets.Trinket b)
         {
             // trinket type compare
             int result = a.GetTrinketData().TrinketEffectClass.CompareTo(b.GetTrinketData().TrinketEffectClass);
@@ -282,21 +283,21 @@ namespace DresserSorter
             // separate by trinket effects
             if (result == 0 && config.VeryTidySort_ByStats)
             {
-                TrinketEffect effectA = a.GetEffect();
-                TrinketEffect effectB = b.GetEffect();
+                Trinkets.TrinketEffect effectA = a.GetEffect();
+                Trinkets.TrinketEffect effectB = b.GetEffect();
 
                 // fairy: compare heal delay
-                if (effectA is FairyBoxTrinketEffect fbt1 && effectB is FairyBoxTrinketEffect fbt2)
+                if (effectA is Trinkets.FairyBoxTrinketEffect fbt1 && effectB is Trinkets.FairyBoxTrinketEffect fbt2)
                 {
                     float delay1 = modHelper.Reflection.GetField<float>(fbt1, "healDelay").GetValue();
                     float delay2 = modHelper.Reflection.GetField<float>(fbt2, "healDelay").GetValue();
                     result = delay1.CompareTo(delay2); // lower value is prior
                 }
                 // frog: comapre variant
-                else if (effectA is CompanionTrinketEffect cte1 && effectB is CompanionTrinketEffect cte2)
-                    result = cte1.variant.CompareTo(cte2.variant);
+                else if (effectA is Trinkets.CompanionTrinketEffect cte1 && effectB is Trinkets.CompanionTrinketEffect cte2)
+                    result = cte1.Variant.CompareTo(cte2.Variant);
                 // ice rod: comapre projectile delay then freeze time
-                else if (effectA is IceOrbTrinketEffect iote1 && effectB is IceOrbTrinketEffect iote2)
+                else if (effectA is Trinkets.IceOrbTrinketEffect iote1 && effectB is Trinkets.IceOrbTrinketEffect iote2)
                 {
                     // compare delay
                     float delay1 = modHelper.Reflection.GetField<float>(iote1, "projectileDelayMS").GetValue();
@@ -312,7 +313,7 @@ namespace DresserSorter
                     }
                 }
                 // magic quiver: compare delay, min dmg then max dmg
-                else if (effectA is MagicQuiverTrinketEffect mqte1 && effectB is MagicQuiverTrinketEffect mqte2)
+                else if (effectA is Trinkets.MagicQuiverTrinketEffect mqte1 && effectB is Trinkets.MagicQuiverTrinketEffect mqte2)
                 {
                     // compare delay
                     float delay1 = modHelper.Reflection.GetField<float>(mqte1, "projectileDelayMS").GetValue();
@@ -337,7 +338,7 @@ namespace DresserSorter
                 }
                 // else case
                 else
-                    result = effectA.general_stat_1.CompareTo(effectB.general_stat_1) * -1; // // higher value is prior
+                    result = effectA.GeneralStat.CompareTo(effectB.GeneralStat) * -1; // // higher value is prior
             }
             return result;
         }
